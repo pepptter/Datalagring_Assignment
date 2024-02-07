@@ -55,14 +55,16 @@ namespace LibraryApp.Infrastructure.Migrations
 
                     b.Property<string>("Author")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("PublishedYear")
+                    b.Property<int>("Published_Year")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("BookID");
 
@@ -71,14 +73,11 @@ namespace LibraryApp.Infrastructure.Migrations
 
             modelBuilder.Entity("LibraryApp.Infrastructure.Entities.BorrowedBookEntity", b =>
                 {
-                    b.Property<int>("BorrowedBookID")
+                    b.Property<int>("BorrowID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BorrowedBookID"));
-
-                    b.Property<int?>("BookEntityBookID")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BorrowID"));
 
                     b.Property<int>("BookID")
                         .HasColumnType("int");
@@ -89,17 +88,14 @@ namespace LibraryApp.Infrastructure.Migrations
                     b.Property<DateTime>("ReturnDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserEntityUserID")
-                        .HasColumnType("int");
-
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.HasKey("BorrowedBookID");
+                    b.HasKey("BorrowID");
 
-                    b.HasIndex("BookEntityBookID");
+                    b.HasIndex("BookID");
 
-                    b.HasIndex("UserEntityUserID");
+                    b.HasIndex("UserID");
 
                     b.ToTable("BorrowedBooks");
                 });
@@ -112,9 +108,10 @@ namespace LibraryApp.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"));
 
-                    b.Property<string>("CategoryName")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("CategoryID");
 
@@ -131,20 +128,23 @@ namespace LibraryApp.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Firstname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Lastname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Phonenumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(12)");
 
                     b.HasKey("UserID");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -158,7 +158,7 @@ namespace LibraryApp.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("LibraryApp.Infrastructure.Entities.CategoryEntity", "Category")
-                        .WithMany()
+                        .WithMany("BookCategories")
                         .HasForeignKey("CategoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -170,13 +170,21 @@ namespace LibraryApp.Infrastructure.Migrations
 
             modelBuilder.Entity("LibraryApp.Infrastructure.Entities.BorrowedBookEntity", b =>
                 {
-                    b.HasOne("LibraryApp.Infrastructure.Entities.BookEntity", null)
+                    b.HasOne("LibraryApp.Infrastructure.Entities.BookEntity", "Book")
                         .WithMany("BorrowedBooks")
-                        .HasForeignKey("BookEntityBookID");
+                        .HasForeignKey("BookID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("LibraryApp.Infrastructure.Entities.UserEntity", null)
+                    b.HasOne("LibraryApp.Infrastructure.Entities.UserEntity", "User")
                         .WithMany("BorrowedBooks")
-                        .HasForeignKey("UserEntityUserID");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LibraryApp.Infrastructure.Entities.BookEntity", b =>
@@ -184,6 +192,11 @@ namespace LibraryApp.Infrastructure.Migrations
                     b.Navigation("BookCategories");
 
                     b.Navigation("BorrowedBooks");
+                });
+
+            modelBuilder.Entity("LibraryApp.Infrastructure.Entities.CategoryEntity", b =>
+                {
+                    b.Navigation("BookCategories");
                 });
 
             modelBuilder.Entity("LibraryApp.Infrastructure.Entities.UserEntity", b =>

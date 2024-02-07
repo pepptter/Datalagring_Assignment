@@ -17,26 +17,89 @@ public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserE
 {
     private readonly LibraryContext _context = context;
     private readonly ILogger _logger = logger;
-
-    public override async Task<IEnumerable<UserEntity>> GetAllAsync()
+    public async Task<UserEntity> AddUserAsync(UserEntity user)
     {
         try
         {
-            var entities = await _context.Users.ToListAsync();
-            if (entities.Count != 0)
-            {
-                return entities;
-            }
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.Message, "Repo.GetAllAsync()", Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "UserRepository.AddUserAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            return null!;
         }
-        return null!;
+    }
+    public async Task<IEnumerable<UserEntity>> GetAllUsersAsync()
+    {
+        try
+        {
+            return await _context.Users.ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(ex.ToString(), "UserRepository.GetAllUsersAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            return Enumerable.Empty<UserEntity>();
+        }
     }
 
-    public override Task<UserEntity> GetByIdAsync(Expression<Func<UserEntity, bool>> predicate)
+    public async Task<UserEntity?> GetUserByIdAsync(int userId)
     {
-        return base.GetByIdAsync(predicate);
+        try
+        {
+            return await _context.Users.FindAsync(userId);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(ex.ToString(), "UserRepository.GetUserByIdAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            return null!;
+        }
+    }
+    public async Task<UserEntity?> GetUserByUserEmailAsync(string userEmail)
+    {
+        try
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(ex.ToString(), "UserRepository.GetUserByUsernameAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            return null!;
+        }
+    }
+    public async Task<UserEntity> UpdateUserAsync(UserEntity user)
+    {
+        try
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(ex.ToString(), "UserRepository.UpdateUserAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            return null!;
+        }
+    }
+
+    public async Task<bool> DeleteUserAsync(int userId)
+    {
+        try
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(ex.ToString(), "UserRepository.DeleteUserAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            return false;
+        }
     }
 }

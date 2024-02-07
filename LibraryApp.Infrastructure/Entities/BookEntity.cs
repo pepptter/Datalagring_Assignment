@@ -6,11 +6,20 @@ public class BookEntity
 {
     [Key]
     public int BookID { get; set; }
-    public string Title { get; set; } = null!;
-    public string Author { get; set; } = null!;
-    public int PublishedYear { get; set; }
 
-    public virtual ICollection<BorrowedBookEntity> BorrowedBooks { get; set; } = new List<BorrowedBookEntity>();
-    public virtual ICollection<BookCategoryEntity> BookCategories { get; set; } = new List<BookCategoryEntity>();
+    [Required]
+    [StringLength(200)]
+    public string Title { get; set; } = null!;
+
+    [Required]
+    [StringLength(200)]
+    public string Author { get; set; } = null!;
+
+    [Required]
+    public int Published_Year { get; set; }
+
+    public ICollection<BorrowedBookEntity> BorrowedBooks { get; set; } = new List<BorrowedBookEntity>();
+
+    public ICollection<BookCategoryEntity> BookCategories { get; set; } = new List<BookCategoryEntity>();
 
 }
