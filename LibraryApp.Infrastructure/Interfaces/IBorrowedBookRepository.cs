@@ -1,10 +1,11 @@
 ﻿using LibraryApp.Infrastructure.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace LibraryApp.Infrastructure.Interfaces;
-
-public interface IBorrowedBookRepository : IRepo<BorrowedBookEntity>
+namespace LibraryApp.Infrastructure.Interfaces
 {
-    public interface IBorrowedBookRepository
+    public interface IBorrowedBookRepository : IRepo<BorrowedBookEntity>
     {
         /// <summary>
         /// Adds a new borrowed book to the repository.
@@ -69,5 +70,13 @@ public interface IBorrowedBookRepository : IRepo<BorrowedBookEntity>
         /// <param name="newReturnDate">The new return date for the borrowed book.</param>
         /// <returns>True if the borrowing period was successfully renewed, otherwise false.</returns>
         Task<bool> RenewBorrowedBookAsync(int borrowedBookId, DateTime newReturnDate);
+
+        /// <summary>
+        /// Updates the return date for a specific borrowed book.
+        /// </summary>
+        /// <param name="borrowedBookId">The ID of the borrowed book to update.</param>
+        /// <param name="newReturnDate">The new return date for the borrowed book.</param>
+        /// <returns>True if the return date was successfully updated, otherwise false.</returns>
+        Task<bool> UpdateBorrowedBookAsync(int borrowedBookId, DateTime newReturnDate);
     }
 }

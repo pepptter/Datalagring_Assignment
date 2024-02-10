@@ -1,4 +1,4 @@
-﻿using LibraryApp.Shared.Interfaces;
+﻿using LibraryApp.Business.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,11 +23,11 @@ namespace LibraryApp.Infrastructure.Interfaces
         Task<IEnumerable<TEntity>> GetAllAsync();
 
         /// <summary>
-        /// Retrieves an entity by the specified predicate.
+        /// Retrieves an entity by its primary key.
         /// </summary>
-        /// <param name="predicate">The predicate to filter entities.</param>
-        /// <returns>The first entity matching the predicate, or null if not found.</returns>
-        Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> predicate);
+        /// <param name="id">The primary key value of the entity to retrieve.</param>
+        /// <returns>The entity with the specified primary key, or null if not found.</returns>
+        Task<TEntity> GetByIdAsync(int id); 
 
         /// <summary>
         /// Updates an entity matching the specified predicate with the provided entity data.

@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using LibraryApp.Shared.Interfaces;
+using LibraryApp.Business.Interfaces;
 
-namespace LibraryApp.Shared.Utils;
+namespace LibraryApp.Business.Utils;
 
 public class Logger(string filePath) : ILogger
 {
@@ -18,7 +18,7 @@ public class Logger(string filePath) : ILogger
             sw.WriteLine(logMessage);
 
         }
-        catch (Exception ex)
+        catch
         {
             Debug.WriteLine($"{DateTime.Now} :: Logger.log() :: {LogTypes.Error} :: {message}");
         }
@@ -33,7 +33,7 @@ public class Logger(string filePath) : ILogger
             sw.WriteLine(logMessage);
 
         }
-        catch (Exception ex)
+        catch
         {
             Debug.WriteLine($"{DateTime.Now} :: Logger.log() :: {LogTypes.Error} :: {message}");
         }
@@ -48,7 +48,7 @@ public class Logger(string filePath) : ILogger
             sw.WriteLine(logMessage);
 
         }
-        catch (Exception ex)
+        catch
         {
             Debug.WriteLine($"{DateTime.Now} :: Logger.log() :: {LogTypes.Error} :: {message}");
         }

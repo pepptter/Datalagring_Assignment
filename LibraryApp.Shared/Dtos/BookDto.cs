@@ -1,4 +1,4 @@
-﻿namespace LibraryApp.Shared.Dtos
+﻿namespace LibraryApp.Business.Dtos
 {
     public class BookDto
     {

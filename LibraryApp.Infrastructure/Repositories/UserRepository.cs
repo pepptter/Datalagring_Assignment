@@ -2,17 +2,11 @@
 using LibraryApp.Infrastructure.Entities;
 using LibraryApp.Infrastructure.Interfaces;
 using LibraryApp.Infrastructure.Repositories;
-using LibraryApp.Shared.Interfaces;
+using LibraryApp.Business.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace LibraryApp.Infrastructure.Repositories;
-
-public interface IUserRepository : IRepo<UserEntity>
-{
-
-}
-
 public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserEntity, LibraryContext>(context, logger), IUserRepository
 {
     private readonly LibraryContext _context = context;
@@ -27,7 +21,7 @@ public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserE
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "UserRepository.AddUserAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "UserRepository.AddUserAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -39,7 +33,7 @@ public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserE
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "UserRepository.GetAllUsersAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "UserRepository.GetAllUsersAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return Enumerable.Empty<UserEntity>();
         }
     }
@@ -52,7 +46,7 @@ public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserE
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "UserRepository.GetUserByIdAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "UserRepository.GetUserByIdAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -64,7 +58,7 @@ public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserE
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "UserRepository.GetUserByUsernameAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "UserRepository.GetUserByUsernameAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -78,7 +72,7 @@ public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserE
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "UserRepository.UpdateUserAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "UserRepository.UpdateUserAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -98,7 +92,7 @@ public class UserRepository(LibraryContext context, ILogger logger) : Repo<UserE
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "UserRepository.DeleteUserAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "UserRepository.DeleteUserAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return false;
         }
     }

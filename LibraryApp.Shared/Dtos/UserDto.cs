@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryApp.Shared.Dtos
+namespace LibraryApp.Business.Dtos
 {
     public class UserDto
     {

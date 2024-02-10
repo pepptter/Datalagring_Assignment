@@ -1,4 +1,4 @@
-﻿namespace LibraryApp.Shared
+﻿namespace LibraryApp.Business
 {
     public class Class1
     {

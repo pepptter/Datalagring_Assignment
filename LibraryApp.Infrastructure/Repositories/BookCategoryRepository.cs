@@ -2,7 +2,7 @@
 using LibraryApp.Infrastructure.Entities;
 using LibraryApp.Infrastructure.Interfaces;
 using LibraryApp.Infrastructure.Repositories;
-using LibraryApp.Shared.Interfaces;
+using LibraryApp.Business.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 public class BookCategoryRepository(LibraryContext context, ILogger logger) : Repo<BookCategoryEntity, LibraryContext>(context, logger), IBookCategoryRepository

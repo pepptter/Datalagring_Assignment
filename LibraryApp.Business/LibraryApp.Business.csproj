@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\LibraryApp.Infrastructure\LibraryApp.Infrastructure.csproj" />
     <ProjectReference Include="..\LibraryApp.Shared\LibraryApp.Shared.csproj" />
   </ItemGroup>

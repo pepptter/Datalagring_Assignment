@@ -1,4 +1,4 @@
-﻿namespace LibraryApp.Shared.Utils;
+﻿namespace LibraryApp.Business.Utils;
 
 public enum LogTypes
 {

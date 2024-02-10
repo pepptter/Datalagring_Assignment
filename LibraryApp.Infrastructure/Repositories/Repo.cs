@@ -1,5 +1,5 @@
 ﻿using LibraryApp.Infrastructure.Interfaces;
-using LibraryApp.Shared.Interfaces;
+using LibraryApp.Business.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -27,7 +27,7 @@ public abstract class Repo<TEntity, TContext> : IRepo<TEntity> where TEntity : c
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "Repo.CreateAsync()", Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "Repo.CreateAsync()", Business.Utils.LogTypes.Error);
         }
         return null!;
 
@@ -44,25 +44,22 @@ public abstract class Repo<TEntity, TContext> : IRepo<TEntity> where TEntity : c
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "Repo.GetAllAsync()", Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "Repo.GetAllAsync()", Business.Utils.LogTypes.Error);
         }
         return null!;
     }
-    public virtual async Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task<TEntity> GetByIdAsync(int id)
     {
         try
         {
-            var entity = await _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
-            if (entity != null)
-            {
-                return entity;
-            }
+            var entity = await _context.Set<TEntity>().FindAsync(id);
+            return entity!;
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "Repo.GetByIdAsync()", Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "Repo.GetByIdAsync()", Business.Utils.LogTypes.Error);
+            return null!;
         }
-        return null!;
     }
     public virtual async Task<TEntity> UpdateAsync(Expression<Func<TEntity, bool>> predicate, TEntity entity)
     {
@@ -78,7 +75,7 @@ public abstract class Repo<TEntity, TContext> : IRepo<TEntity> where TEntity : c
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "Repo.UpdateAsync()", Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "Repo.UpdateAsync()", Business.Utils.LogTypes.Error);
         }
         return null!;
     }
@@ -96,7 +93,7 @@ public abstract class Repo<TEntity, TContext> : IRepo<TEntity> where TEntity : c
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "Repo.DeleteAsync()", Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "Repo.DeleteAsync()", Business.Utils.LogTypes.Error);
         }
         return false;
     }
@@ -112,7 +109,7 @@ public abstract class Repo<TEntity, TContext> : IRepo<TEntity> where TEntity : c
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "Repo.ExistsAsync()", Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "Repo.ExistsAsync()", Business.Utils.LogTypes.Error);
         }
         return false;
     }

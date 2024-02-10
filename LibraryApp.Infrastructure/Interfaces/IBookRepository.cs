@@ -33,6 +33,15 @@ namespace LibraryApp.Infrastructure.Interfaces
         /// Retrieves all book entities from the repository.
         /// </summary>
         /// <returns>A collection of all book entities.</returns>
+
         new Task<IEnumerable<BookEntity>> GetAllAsync();
+
+        /// <summary>
+        /// Retrieves all books belonging to the specified category from the repository.
+        /// </summary>
+        /// <param name="categoryId">The ID of the category.</param>
+        /// <returns>A collection of all book entities belonging to the specified category.</returns>
+
+        Task<IEnumerable<BookEntity>> GetAllBooksByCategoryAsync(int categoryId);
     }
 }

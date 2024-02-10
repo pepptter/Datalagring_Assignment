@@ -1,6 +1,6 @@
-﻿using LibraryApp.Shared.Utils;
+﻿using LibraryApp.Business.Utils;
 
-namespace LibraryApp.Shared.Interfaces
+namespace LibraryApp.Business.Interfaces
 {
     public interface ILogger
     {

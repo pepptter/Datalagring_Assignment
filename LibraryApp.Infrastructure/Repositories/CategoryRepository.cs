@@ -1,7 +1,7 @@
 ﻿using LibraryApp.Infrastructure.Contexts;
 using LibraryApp.Infrastructure.Entities;
 using LibraryApp.Infrastructure.Repositories;
-using LibraryApp.Shared.Interfaces;
+using LibraryApp.Business.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Infrastructure.Interfaces;
@@ -20,7 +20,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.AddCategoryAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.AddCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -35,7 +35,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.AddBookToCategoryAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.AddBookToCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return false;
         }
     }
@@ -47,7 +47,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.GetCategoryByIdAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.GetCategoryByIdAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -60,7 +60,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.GetCategoryByNameAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.GetCategoryByNameAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -75,7 +75,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.GetBooksByCategoryAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.GetBooksByCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return Enumerable.Empty<BookEntity>();
         }
     }
@@ -89,7 +89,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.UpdateCategoryAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.UpdateCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return null!;
         }
     }
@@ -108,7 +108,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.RemoveCategoryAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.RemoveCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return false;
         }
     }
@@ -127,7 +127,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.RemoveCategoryAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.RemoveCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return false;
         }
     }
@@ -146,7 +146,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.RemoveBookFromCategoryAsync()", LibraryApp.Shared.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.RemoveBookFromCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return false;
         }
     }

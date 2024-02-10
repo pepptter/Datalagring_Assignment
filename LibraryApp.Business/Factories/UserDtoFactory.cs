@@ -1,5 +1,5 @@
 ﻿using LibraryApp.Infrastructure.Entities;
-using LibraryApp.Shared.Dtos;
+using LibraryApp.Business.Dtos;
 
 using System;
 using System.Collections.Generic;
@@ -25,6 +25,23 @@ namespace LibraryApp.Business.Factories
                 LastName = userEntity.Lastname,
                 Email = userEntity.Email,
                 PhoneNumber = userEntity.Phonenumber
+            };
+        }
+
+        public static UserEntity Create(UserDto userDto)
+        {
+            if (userDto == null)
+            {
+                throw new ArgumentNullException(nameof(userDto));
+            }
+
+            return new UserEntity
+            {
+                UserID = userDto.UserID,
+                Firstname = userDto.FirstName,
+                Lastname = userDto.LastName,
+                Email = userDto.Email,
+                Phonenumber = userDto.PhoneNumber
             };
         }
     }

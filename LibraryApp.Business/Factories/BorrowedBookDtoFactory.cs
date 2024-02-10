@@ -1,5 +1,5 @@
 ﻿using LibraryApp.Infrastructure.Entities;
-using LibraryApp.Shared.Dtos;
+using LibraryApp.Business.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,11 @@ namespace LibraryApp.Business.Factories
     {
         public static BorrowedBookDto Create(BorrowedBookEntity borrowedBookEntity)
         {
+            if (borrowedBookEntity == null)
+            {
+                throw new ArgumentNullException(nameof(borrowedBookEntity));
+            }
+
             return new BorrowedBookDto
             {
                 BorrowID = borrowedBookEntity.BorrowID,
@@ -19,6 +24,23 @@ namespace LibraryApp.Business.Factories
                 BookID = borrowedBookEntity.BookID,
                 BorrowDate = borrowedBookEntity.BorrowDate,
                 ReturnDate = borrowedBookEntity.ReturnDate
+            };
+        }
+
+        public static BorrowedBookEntity Create(BorrowedBookDto borrowedBookDto)
+        {
+            if (borrowedBookDto == null)
+            {
+                throw new ArgumentNullException(nameof(borrowedBookDto));
+            }
+
+            return new BorrowedBookEntity
+            {
+                BorrowID = borrowedBookDto.BorrowID,
+                UserID = borrowedBookDto.UserID,
+                BookID = borrowedBookDto.BookID,
+                BorrowDate = borrowedBookDto.BorrowDate,
+                ReturnDate = borrowedBookDto.ReturnDate
             };
         }
     }
