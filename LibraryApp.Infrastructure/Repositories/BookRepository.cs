@@ -41,12 +41,7 @@ public class BookRepository(LibraryContext context, ILogger logger) : Repo<BookE
 
             if (book != null)
             {
-
                 var categoryNames = book.BookCategories.Select(bc => bc.Category.Name).ToList();
-                foreach (var categoryName in categoryNames)
-                {
-                    Console.WriteLine(categoryName);
-                }
             }
 
             return book;
