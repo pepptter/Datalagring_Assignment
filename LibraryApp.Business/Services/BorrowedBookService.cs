@@ -7,13 +7,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LibraryApp.Business.Utils;
 using LibraryApp.Infrastructure.Entities;
+using LibraryApp.Infrastructure.Repositories;
 
 namespace LibraryApp.Business.Services
 {
-    public class BorrowedBookService(IBorrowedBookRepository borrowedBookRepository, ILogger logger) : IBorrowedBookService
+    public class BorrowedBookService(IBorrowedBookRepository borrowedBookRepository, ILogger logger, IUserRepository userRepository, IBookRepository bookRepository) : IBorrowedBookService
     {
         private readonly IBorrowedBookRepository _borrowedBookRepository = borrowedBookRepository;
         private readonly ILogger _logger = logger;
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IBookRepository _bookRepository = bookRepository;
 
         public async Task<IEnumerable<BorrowedBookDto>> GetAllBorrowedBooksAsync()
         {
@@ -29,7 +32,7 @@ namespace LibraryApp.Business.Services
             }
         }
 
-        public async Task<bool> ExtendBorrowTimeAsync(int borrowId, int additionalDays)
+        public async Task<bool> ExtendBorrowTimeAsync(int borrowId)
         {
             try
             {
@@ -40,7 +43,7 @@ namespace LibraryApp.Business.Services
                     return false;
                 }
 
-                borrowedBook.ReturnDate = borrowedBook.ReturnDate.AddDays(additionalDays);
+                borrowedBook.ReturnDate = borrowedBook.ReturnDate.AddDays(14);
                 await _borrowedBookRepository.UpdateAsync(b => b.BorrowID == borrowId, borrowedBook);
 
                 return true;
@@ -56,15 +59,29 @@ namespace LibraryApp.Business.Services
         {
             try
             {
-                var borrowedBook = new BorrowedBookEntity
+                var userExists = await _userRepository.GetUserByIdAsync(userId);
+                if (userExists == null)
+                {
+                    _logger.Log($"User with ID '{userId}' does not exist.", "BorrowService.BorrowBookAsync()", LogTypes.Info);
+                    return false;
+                }
+
+                var bookExists = await _bookRepository.FindBookByIdAsync(bookId);
+                if (bookExists == null)
+                {
+                    _logger.Log($"Book with ID '{bookId}' does not exist.", "BorrowService.BorrowBookAsync()", LogTypes.Info);
+                    return false;
+                }
+
+                var borrowedBookEntity = new BorrowedBookEntity
                 {
                     UserID = userId,
                     BookID = bookId,
                     BorrowDate = borrowDate,
                     ReturnDate = returnDate
                 };
+                await _borrowedBookRepository.CreateAsync(borrowedBookEntity);
 
-                await _borrowedBookRepository.CreateAsync(borrowedBook);
                 return true;
             }
             catch (Exception ex)
@@ -73,6 +90,8 @@ namespace LibraryApp.Business.Services
                 return false;
             }
         }
+
+
         public async Task<bool> ReturnBookAsync(int borrowId)
         {
             try

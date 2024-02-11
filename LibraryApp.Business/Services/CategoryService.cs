@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LibraryApp.Business.Dtos;
 using LibraryApp.Business.Utils;
 using LibraryApp.Business.Interfaces;
+using LibraryApp.Infrastructure.Entities;
 
 namespace LibraryApp.Business.Services;
 
@@ -27,13 +28,24 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
             return new List<CategoryDto>();
         }
     }
-    public async Task<CategoryDto> AddCategoryAsync(CategoryDto categoryDto)
+    public async Task<CategoryDto> AddCategoryAsync(object category)
     {
         try
         {
-            var categoryEntity = CategoryDtoFactory.Create(categoryDto);
-            var addedCategory = await _categoryRepository.AddCategoryAsync(categoryEntity);
-            return CategoryDtoFactory.Create(addedCategory);
+            if (category is CategoryDto categoryDto)
+            {
+                var addedCategory = await _categoryRepository.AddCategoryAsync(new CategoryEntity { Name = categoryDto.Name });
+                return CategoryDtoFactory.Create(addedCategory);
+            }
+            else if (category is string categoryName)
+            {
+                var addedCategory = await _categoryRepository.AddCategoryAsync(new CategoryEntity { Name = categoryName });
+                return CategoryDtoFactory.Create(addedCategory);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid argument type. Expected CategoryDto or string.");
+            }
         }
         catch (Exception ex)
         {
@@ -41,6 +53,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
             return null!;
         }
     }
+
 
     public async Task<CategoryDto> UpdateCategoryAsync(CategoryDto categoryDto)
     {
@@ -61,20 +74,6 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
         {
             _logger.Log(ex.ToString(), "CategoryService.UpdateCategoryAsync()", LogTypes.Error);
             return null!;
-        }
-    }
-
-    public async Task<IEnumerable<BookDto>> GetBooksByCategoryAsync(int categoryId)
-    {
-        try
-        {
-            var books = await _categoryRepository.GetBooksByCategoryAsync(categoryId);
-            return books.Select(BookDtoFactory.Create);
-        }
-        catch (Exception ex)
-        {
-            _logger.Log(ex.ToString(), "CategoryService.GetBooksByCategoryAsync()", LogTypes.Error);
-            return new List<BookDto>();
         }
     }
 

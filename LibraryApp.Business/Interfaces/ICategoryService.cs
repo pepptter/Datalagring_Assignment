@@ -13,9 +13,9 @@ public interface ICategoryService
     /// <summary>
     /// Adds a new category to the library.
     /// </summary>
-    /// <param name="categoryDto">The category data to be added.</param>
+    /// <param name="category">The category as an object, either categoryDto or string categoryName.</param>
     /// <returns>The added category.</returns>
-    Task<CategoryDto> AddCategoryAsync(CategoryDto categoryDto);
+    Task<CategoryDto> AddCategoryAsync(object category);
 
     /// <summary>
     /// Updates an existing category in the library.
@@ -23,13 +23,6 @@ public interface ICategoryService
     /// <param name="categoryDto">The updated category data.</param>
     /// <returns>The updated category, or null if the category with the specified ID is not found.</returns>
     Task<CategoryDto> UpdateCategoryAsync(CategoryDto categoryDto);
-
-    /// <summary>
-    /// Retrieves all books belonging to a specific category.
-    /// </summary>
-    /// <param name="categoryId">The ID of the category.</param>
-    /// <returns>A collection of books in the specified category.</returns>
-    Task<IEnumerable<BookDto>> GetBooksByCategoryAsync(int categoryId);
 
     /// <summary>
     /// Removes a category from the library.

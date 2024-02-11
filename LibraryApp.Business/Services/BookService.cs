@@ -9,20 +9,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Business.Services
 {
-    public class BookService(IBookRepository bookRepository, ILogger logger) : IBookService
+    public class BookService(IBookRepository bookRepository, ILogger logger, ICategoryRepository categoryRepository, IBookCategoryRepository bookCategoryRepository) : IBookService
     {
         private readonly IBookRepository _bookRepository = bookRepository;
         private readonly ILogger _logger = logger;
-
-        public async Task<BookDto> AddBookAsync(BookDto bookData)
+        private readonly ICategoryRepository _categoryRepository = categoryRepository;
+        private readonly IBookCategoryRepository _bookCategoryRepository = bookCategoryRepository;
+        public async Task<BookDto> AddBookAsync(BookDto bookDto)
         {
             try
             {
-                var bookEntity = BookDtoFactory.Create(bookData);
+                var bookEntity = new BookEntity
+                {
+                    Title = bookDto.Title,
+                    Author = bookDto.Author,
+                    Published_Year = bookDto.Published_Year
+                };
+
                 var addedBook = await _bookRepository.CreateAsync(bookEntity);
+
+                var category = await _categoryRepository.GetCategoryByNameAsync(bookDto.CategoryName);
+
+                if (category == null)
+                {
+                    var newCategory = new CategoryEntity { Name = bookDto.CategoryName };
+                    var addedCategory = await _categoryRepository.AddCategoryAsync(newCategory);
+
+                    var bookCategory = new BookCategoryEntity
+                    {
+                        BookID = addedBook.BookID,
+                        CategoryID = addedCategory.CategoryID
+                    };
+
+                    await _bookCategoryRepository.CreateAsync(bookCategory);
+
+                    return BookDtoFactory.Create(addedBook);
+                }
+                else
+                {
+                    var bookCategory = new BookCategoryEntity
+                    {
+                        BookID = addedBook.BookID,
+                        CategoryID = category.CategoryID
+                    };
+
+                    await _bookCategoryRepository.CreateAsync(bookCategory);
+                }
+
                 return BookDtoFactory.Create(addedBook);
             }
             catch (Exception ex)
@@ -31,6 +68,7 @@ namespace LibraryApp.Business.Services
                 return null!;
             }
         }
+
 
         public async Task<BookDto> UpdateBookAsync(int bookId, BookDto bookData)
         {
@@ -43,9 +81,18 @@ namespace LibraryApp.Business.Services
                     return null!;
                 }
 
-                existingBook.Title = bookData.Title;
-                existingBook.Author = bookData.Author;
-                existingBook.Published_Year = bookData.Published_Year;
+                if (!string.IsNullOrEmpty(bookData.Title))
+                {
+                    existingBook.Title = bookData.Title;
+                }
+                if (!string.IsNullOrEmpty(bookData.Author))
+                {
+                    existingBook.Author = bookData.Author;
+                }
+                if (bookData.Published_Year != 0)
+                {
+                    existingBook.Published_Year = bookData.Published_Year;
+                }
 
                 var updatedBook = await _bookRepository.UpdateAsync(b => b.BookID == bookId, existingBook);
                 return BookDtoFactory.Create(updatedBook);
@@ -56,6 +103,9 @@ namespace LibraryApp.Business.Services
                 return null!;
             }
         }
+
+
+
         public async Task<bool> DeleteBookAsync(Expression<Func<BookEntity, bool>> expression)
         {
             try
@@ -75,7 +125,7 @@ namespace LibraryApp.Business.Services
         {
             try
             {
-                var bookEntity = await _bookRepository.GetByIdAsync(bookId);
+                var bookEntity = await _bookRepository.FindBookByIdAsync(bookId);
                 if (bookEntity == null)
                 {
                     _logger.Log($"Book with ID '{bookId}' does not exist.", "BookService.GetBookByIdAsync()", LogTypes.Info);
@@ -87,6 +137,31 @@ namespace LibraryApp.Business.Services
             catch (Exception ex)
             {
                 _logger.Log(ex.ToString(), "BookService.GetBookByIdAsync()", LogTypes.Error);
+                return null!;
+            }
+        }
+        
+        public async Task<BookDto> GetBookWithCategoriesByIdAsync(int bookId)
+        {
+             try
+            {
+                var bookEntity = await _bookRepository.FindBookByIdAsync(bookId);
+                if (bookEntity == null)
+                {
+                    _logger.Log($"Book with ID '{bookId}' does not exist.", "BookService.GetBookWithCategoriesByIdAsync()", LogTypes.Info);
+                    return null!;
+                }
+
+                var bookDto = BookDtoFactory.Create(bookEntity);
+
+                var categoryNames = bookEntity.BookCategories.Select(bc => bc.Category.Name).ToList();
+                bookDto.CategoryNames = categoryNames;
+
+                return bookDto;
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(ex.ToString(), "BookService.GetBookWithCategoriesByIdAsync()", LogTypes.Error);
                 return null!;
             }
         }
@@ -146,5 +221,21 @@ namespace LibraryApp.Business.Services
                 return Enumerable.Empty<BookDto>();
             }
         }
+
+        public async Task<IEnumerable<BookDto>> FindBooksByCategoryNameAsync(string categoryName)
+        {
+            try
+            {
+                var books = await _bookRepository.FindBooksByCategoryNameAsync(categoryName);
+                return books.Select(BookDtoFactory.Create);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(ex.ToString(), "BookService.FindBooksByCategoryNameAsync()", LogTypes.Error);
+                return Enumerable.Empty<BookDto>();
+            }
+        }
+
+
     }
 }

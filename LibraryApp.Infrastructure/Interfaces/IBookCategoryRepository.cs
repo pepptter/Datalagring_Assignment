@@ -123,6 +123,7 @@ public interface IBookCategoryRepository : IRepo<BookCategoryEntity>
     /// <param name="bookTitle">The title of the book to remove.</param>
     /// <param name="categoryName">The name of the category to remove the book from.</param>
     Task RemoveBookFromCategoryAsync(string bookTitle, string categoryName);
+
 }
 
 

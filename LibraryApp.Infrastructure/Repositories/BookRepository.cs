@@ -30,6 +30,35 @@ public class BookRepository(LibraryContext context, ILogger logger) : Repo<BookE
             return new List<BookEntity>();
         }
     }
+    public async Task<BookEntity?> FindBookByIdAsync(int bookId)
+    {
+        try
+        {
+            var book = await _context.Books
+                .Include(book => book.BookCategories)
+                    .ThenInclude(bc => bc.Category)
+                .FirstOrDefaultAsync(book => book.BookID == bookId);
+
+            if (book != null)
+            {
+
+                var categoryNames = book.BookCategories.Select(bc => bc.Category.Name).ToList();
+                foreach (var categoryName in categoryNames)
+                {
+                    Console.WriteLine(categoryName);
+                }
+            }
+
+            return book;
+        }
+        catch (Exception ex)
+        {
+            _logger.Log(ex.Message, "BookRepository.FindBookByIdAsync()", LibraryApp.Business.Utils.LogTypes.Error);
+            return null!;
+        }
+    }
+
+
     public async Task<BookEntity> FindFirstByTitleAsync(string title)
     {
         try
@@ -97,5 +126,11 @@ public class BookRepository(LibraryContext context, ILogger logger) : Repo<BookE
             _logger.Log(ex.ToString(), "BookRepository.GetAllBooksByCategoryAsync()", LibraryApp.Business.Utils.LogTypes.Error);
             return new List<BookEntity>();
         }
+    }
+    public async Task<IEnumerable<BookEntity>> FindBooksByCategoryNameAsync(string categoryName)
+    {
+        return await _context.Books
+            .Where(b => b.BookCategories.Any(bc => bc.Category.Name == categoryName))
+            .ToListAsync();
     }
 }

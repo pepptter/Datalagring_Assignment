@@ -19,7 +19,7 @@ namespace LibraryApp.Business.Interfaces
         /// <param name="borrowId">The ID of the borrowed book.</param>
         /// <param name="additionalDays">The number of additional days to extend the return date by.</param>
         /// <returns>True if the extension was successful, otherwise false.</returns>
-        Task<bool> ExtendBorrowTimeAsync(int borrowId, int additionalDays);
+        Task<bool> ExtendBorrowTimeAsync(int borrowId);
 
         /// <summary>
         /// Borrows a book from the library.

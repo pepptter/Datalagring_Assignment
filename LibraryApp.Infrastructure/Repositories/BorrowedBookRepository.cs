@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 namespace LibraryApp.Infrastructure.Interfaces;
-public class borrowedBookRepository(LibraryContext context, ILogger logger) : Repo<BorrowedBookEntity, LibraryContext>(context, logger), IBorrowedBookRepository
+public class BorrowedBookRepository(LibraryContext context, ILogger logger) : Repo<BorrowedBookEntity, LibraryContext>(context, logger), IBorrowedBookRepository
 {
     private readonly LibraryContext _context = context;
     private readonly ILogger _logger = logger;

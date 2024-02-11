@@ -97,10 +97,22 @@ public class UserService(IUserRepository userRepository, ILogger logger, IBorrow
                 return null!;
             }
 
-            existingUser.Firstname = userData.FirstName;
-            existingUser.Lastname = userData.LastName;
-            existingUser.Email = userData.Email;
-            existingUser.Phonenumber = userData.PhoneNumber;
+            if (!string.IsNullOrWhiteSpace(userData.FirstName))
+            {
+                existingUser.Firstname = userData.FirstName;
+            }
+            if (!string.IsNullOrWhiteSpace(userData.LastName))
+            {
+                existingUser.Lastname = userData.LastName;
+            }
+            if (!string.IsNullOrWhiteSpace(userData.Email))
+            {
+                existingUser.Email = userData.Email;
+            }
+            if (!string.IsNullOrWhiteSpace(userData.PhoneNumber))
+            {
+                existingUser.Phonenumber = userData.PhoneNumber;
+            }
 
             var updatedUser = await _userRepository.UpdateUserAsync(existingUser);
             return UserDtoFactory.Create(updatedUser);
@@ -111,6 +123,7 @@ public class UserService(IUserRepository userRepository, ILogger logger, IBorrow
             return null!;
         }
     }
+
     public async Task<bool> DeleteUserAsync(int userId)
     {
         try

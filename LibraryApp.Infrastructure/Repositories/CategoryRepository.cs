@@ -60,7 +60,7 @@ public class CategoryRepository(LibraryContext context, ILogger logger) : Repo<C
         }
         catch (Exception ex)
         {
-            _logger.Log(ex.ToString(), "CategoryRepository.GetCategoryByNameAsync()", LibraryApp.Business.Utils.LogTypes.Error);
+            _logger.Log(ex.ToString(), "CategoryRepository.GetCategoryByNameAsync()", Business.Utils.LogTypes.Error);
             return null!;
         }
     }

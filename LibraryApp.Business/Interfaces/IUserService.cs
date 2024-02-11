@@ -2,9 +2,6 @@
 
 namespace LibraryApp.Business.Interfaces
 {
-    /// <summary>
-    /// Interface for managing operations related to users.
-    /// </summary>
     public interface IUserService
     {
         /// <summary>

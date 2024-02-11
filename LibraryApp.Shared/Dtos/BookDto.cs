@@ -6,5 +6,9 @@
         public int BookID { get; set; }
         public int Published_Year { get; set; }
         public string Title { get; set; } = null!;
+        public string CategoryName { get; set; } = null!;
+        public List<string> CategoryNames { get; set; } = new List<string>();
+
+
     }
 }

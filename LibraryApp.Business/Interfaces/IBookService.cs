@@ -63,4 +63,20 @@ public interface IBookService
     /// <param name="categoryId">The ID of the category.</param>
     /// <returns>A collection of books belonging to the specified category.</returns>
     Task<IEnumerable<BookDto>> FindBooksByCategoryAsync(int categoryId);
+
+    /// <summary>
+    /// Retrieves a book with its associated categories by its ID.
+    /// </summary>
+    /// <param name="bookId">The ID of the book to retrieve.</param>
+    /// <returns>A BookDto object containing the book information and a list of associated category names.</returns>
+    Task<BookDto> GetBookWithCategoriesByIdAsync(int bookId);
+
+    /// <summary>
+    /// Finds books belonging to a specific category by category name.
+    /// </summary>
+    /// <param name="categoryName">The name of the category.</param>
+    /// <returns>A collection of books belonging to the specified category.</returns>
+    Task<IEnumerable<BookDto>> FindBooksByCategoryNameAsync(string categoryName);
+    
+
 }
