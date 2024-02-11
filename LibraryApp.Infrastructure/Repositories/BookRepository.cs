@@ -20,9 +20,8 @@ public class BookRepository(LibraryContext context, ILogger logger) : Repo<BookE
                 return new List<BookEntity>();
             }
 
-            return await _context.Books
-                                 .Where(book => book.Author.Contains(author, StringComparison.OrdinalIgnoreCase))
-                                 .ToListAsync();
+            var allBooks = await _context.Books.ToListAsync();
+            return allBooks.Where(book => book.Author.Contains(author, StringComparison.OrdinalIgnoreCase));
         }
         catch (Exception ex)
         {
@@ -30,6 +29,7 @@ public class BookRepository(LibraryContext context, ILogger logger) : Repo<BookE
             return new List<BookEntity>();
         }
     }
+
     public async Task<BookEntity?> FindBookByIdAsync(int bookId)
     {
         try

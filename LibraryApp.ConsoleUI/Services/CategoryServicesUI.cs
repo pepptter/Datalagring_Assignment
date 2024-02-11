@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.ConsoleUI.Services;
 
-public class CategoryServicesUI(ICategoryService categoryService)
+public class CategoryServicesUI(ICategoryService categoryService, ICategoryRepository categoryRepository, IBookCategoryRepository bookCategoryRepository)
 {
     private readonly ICategoryService _categoryService = categoryService;
+    private readonly IBookCategoryRepository _bookCategoryRepository = bookCategoryRepository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
     public async Task ManageCategoriesAsync()
     {
@@ -54,8 +56,26 @@ public class CategoryServicesUI(ICategoryService categoryService)
     {
         Console.WriteLine("Enter category name:");
         string categoryName = Console.ReadLine()!;
-        await _categoryService.AddCategoryAsync(new CategoryDto { Name = categoryName });
-        Console.WriteLine("Category added successfully. Press any key to continue...");
+
+        var existingCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
+        if (existingCategory != null)
+        {
+            Console.WriteLine($"Category '{categoryName}' already exists.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            return;
+        }
+
+        var result = await _categoryService.AddCategoryAsync(new CategoryDto { Name = categoryName });
+        if (result != null)
+        {
+            Console.WriteLine("Category added successfully.");
+        }
+        else
+        {
+            Console.WriteLine("Failed to add category.");
+        }
+        Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
     }
 
@@ -70,6 +90,16 @@ public class CategoryServicesUI(ICategoryService categoryService)
 
         Console.WriteLine("Enter the new name for the category:");
         string categoryName = Console.ReadLine()!;
+
+        var existingCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
+        if (existingCategory != null && existingCategory.CategoryID != categoryId)
+        {
+            Console.WriteLine($"Category '{categoryName}' already exists.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            return;
+        }
+
         var result = await _categoryService.UpdateCategoryAsync(new CategoryDto { CategoryID = categoryId, Name = categoryName });
         if (result != null)
         {
@@ -81,7 +111,7 @@ public class CategoryServicesUI(ICategoryService categoryService)
         }
         Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
-    }   
+    }
 
     private async Task DeleteCategoryAsync()
     {

@@ -71,8 +71,9 @@ namespace LibraryApp.ConsoleUI.Services
             string title = Console.ReadLine()!;
             Console.Write("Author: ");
             string author = Console.ReadLine()!;
-            Console.Write("Category: ");
-            string categoryName = Console.ReadLine()!;
+            Console.Write("Categories (comma-separated): ");
+            string categoriesInput = Console.ReadLine()!;
+            var categoryNames = categoriesInput.Split(',').Select(c => c.Trim()).ToList();
             Console.Write("Published Year: ");
             int publishedYear;
             while (!int.TryParse(Console.ReadLine(), out publishedYear))
@@ -80,13 +81,13 @@ namespace LibraryApp.ConsoleUI.Services
                 Console.WriteLine("Invalid input, please enter a valid year.");
                 Console.Write("Published Year: ");
             }
-            var category = await _categoryService.AddCategoryAsync(categoryName);
-
-            var bookDto = new BookDto { Title = title, Author = author, CategoryName = category.Name, Published_Year = publishedYear };
+            var bookDto = new BookDto { Title = title, Author = author, CategoryNames = categoryNames, Published_Year = publishedYear };
             await _bookService.AddBookAsync(bookDto);
+
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
+
 
         private async Task UpdateBookAsync()
         {
@@ -103,8 +104,9 @@ namespace LibraryApp.ConsoleUI.Services
             string title = Console.ReadLine()!;
             Console.Write("Author (leave blank to keep current): ");
             string author = Console.ReadLine()!;
-            Console.Write("Category (leave blank to keep current): ");
-            string category = Console.ReadLine()!;
+            Console.Write("Categories (comma-separated, leave blank to keep current): ");
+            string categoriesInput = Console.ReadLine()!;
+            var categoryNames = string.IsNullOrEmpty(categoriesInput) ? new List<string>() : categoriesInput.Split(',').Select(c => c.Trim()).ToList();
             Console.Write("Published Year (leave blank to keep current): ");
             string publishedYearInput = Console.ReadLine()!;
 
@@ -114,12 +116,13 @@ namespace LibraryApp.ConsoleUI.Services
                 Console.WriteLine("Book not found.");
                 return;
             }
+
             var updatedBook = new BookDto
             {
                 BookID = bookId,
                 Title = string.IsNullOrEmpty(title) ? existingBook.Title : title,
                 Author = string.IsNullOrEmpty(author) ? existingBook.Author : author,
-                CategoryName = string.IsNullOrEmpty(category) ? existingBook.CategoryName : category
+                CategoryNames = categoryNames.Any() ? categoryNames : existingBook.CategoryNames
             };
 
             if (!string.IsNullOrWhiteSpace(publishedYearInput))
@@ -138,6 +141,8 @@ namespace LibraryApp.ConsoleUI.Services
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
+
+
 
 
 
@@ -183,9 +188,6 @@ namespace LibraryApp.ConsoleUI.Services
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
-
-
-
 
         private async Task GetAllBooksAsync()
         {

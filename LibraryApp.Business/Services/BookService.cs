@@ -4,12 +4,8 @@ using LibraryApp.Infrastructure.Interfaces;
 using LibraryApp.Business.Dtos;
 using LibraryApp.Business.Interfaces;
 using LibraryApp.Business.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace LibraryApp.Business.Services
 {
@@ -32,25 +28,14 @@ namespace LibraryApp.Business.Services
 
                 var addedBook = await _bookRepository.CreateAsync(bookEntity);
 
-                var category = await _categoryRepository.GetCategoryByNameAsync(bookDto.CategoryName);
-
-                if (category == null)
+                foreach (var categoryName in bookDto.CategoryNames)
                 {
-                    var newCategory = new CategoryEntity { Name = bookDto.CategoryName };
-                    var addedCategory = await _categoryRepository.AddCategoryAsync(newCategory);
-
-                    var bookCategory = new BookCategoryEntity
+                    var category = await _categoryRepository.GetCategoryByNameAsync(categoryName);
+                    if (category == null)
                     {
-                        BookID = addedBook.BookID,
-                        CategoryID = addedCategory.CategoryID
-                    };
-
-                    await _bookCategoryRepository.CreateAsync(bookCategory);
-
-                    return BookDtoFactory.Create(addedBook);
-                }
-                else
-                {
+                        var newCategory = new CategoryEntity { Name = categoryName };
+                        category = await _categoryRepository.AddCategoryAsync(newCategory);
+                    }
                     var bookCategory = new BookCategoryEntity
                     {
                         BookID = addedBook.BookID,
@@ -68,6 +53,7 @@ namespace LibraryApp.Business.Services
                 return null!;
             }
         }
+
 
 
         public async Task<BookDto> UpdateBookAsync(int bookId, BookDto bookData)
@@ -95,6 +81,32 @@ namespace LibraryApp.Business.Services
                 }
 
                 var updatedBook = await _bookRepository.UpdateAsync(b => b.BookID == bookId, existingBook);
+
+                var existingCategories = await _bookCategoryRepository.GetCategoriesByBookAsync(bookId);
+
+                foreach (var existingCategory in existingCategories)
+                {
+                    await _bookCategoryRepository.DeleteAsync(bookId, existingCategory!.CategoryID);
+                }
+
+
+                foreach (var categoryName in bookData.CategoryNames)
+                {
+                    var category = await _categoryRepository.GetCategoryByNameAsync(categoryName);
+                    if (category == null)
+                    {
+                        var newCategory = new CategoryEntity { Name = categoryName };
+                        category = await _categoryRepository.AddCategoryAsync(newCategory);
+                    }
+                    var bookCategory = new BookCategoryEntity
+                    {
+                        BookID = updatedBook.BookID,
+                        CategoryID = category.CategoryID
+                    };
+
+                    await _bookCategoryRepository.CreateAsync(bookCategory);
+                }
+
                 return BookDtoFactory.Create(updatedBook);
             }
             catch (Exception ex)
@@ -103,6 +115,13 @@ namespace LibraryApp.Business.Services
                 return null!;
             }
         }
+
+
+
+
+
+
+
 
 
 

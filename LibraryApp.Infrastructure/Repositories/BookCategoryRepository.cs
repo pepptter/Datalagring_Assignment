@@ -180,6 +180,8 @@ public class BookCategoryRepository(LibraryContext context, ILogger logger) : Re
                                .ToListAsync();
     }
 
+
+
     public async Task<IEnumerable<BookEntity>> GetBooksByCategoryAsync(string categoryName)
     {
         return await _context.Categories

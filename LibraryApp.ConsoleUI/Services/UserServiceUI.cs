@@ -1,11 +1,6 @@
 ﻿using LibraryApp.Business.Dtos;
 using LibraryApp.Business.Interfaces;
-using LibraryApp.Business.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace LibraryApp.ConsoleUI.Services;
 
@@ -89,29 +84,35 @@ public class UserServiceUI(IUserService userService)
         Console.WriteLine("Enter email: ");
         string email = Console.ReadLine()!;
 
-        Console.WriteLine("Enter phonenumber(optional):");
+        Console.WriteLine("Enter phone number (optional):");
         string phoneNumber = Console.ReadLine()!;
 
         if (string.IsNullOrEmpty(phoneNumber))
         {
             phoneNumber = null!;
         }
-        if (firstName != null && lastName != null && email != null)
+
+        if (!string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName) && !string.IsNullOrWhiteSpace(email))
         {
             var result = await _userService.RegisterUserAsync(new UserDto { FirstName = firstName, LastName = lastName, Email = email, PhoneNumber = phoneNumber });
-            Console.WriteLine("User added successfully. Press any key to continue...");
-            Console.ReadKey();
+            if (result != null)
+            {
+                Console.WriteLine("User added successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Failed to add user. The email might already be in use.");
+            }
         }
         else
         {
-            Console.WriteLine("Invalid input. Press any key to try again...");
-            await AddUserAsync();
-            Console.ReadKey();
+            Console.WriteLine("Invalid input. Please provide all required information.");
         }
 
-        Console.WriteLine("User added successfully. Press any key to continue...");
+        Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
     }
+
     public async Task<UserDto> GetUserByIdAsync()
     {
         Console.WriteLine("Enter the ID of the user you want to find:");

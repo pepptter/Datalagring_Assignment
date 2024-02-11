@@ -32,20 +32,30 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
     {
         try
         {
+            string categoryName = null!;
+
             if (category is CategoryDto categoryDto)
             {
-                var addedCategory = await _categoryRepository.AddCategoryAsync(new CategoryEntity { Name = categoryDto.Name });
-                return CategoryDtoFactory.Create(addedCategory);
+                categoryName = categoryDto.Name;
             }
-            else if (category is string categoryName)
+            else if (category is string name)
             {
-                var addedCategory = await _categoryRepository.AddCategoryAsync(new CategoryEntity { Name = categoryName });
-                return CategoryDtoFactory.Create(addedCategory);
+                categoryName = name;
             }
             else
             {
                 throw new ArgumentException("Invalid argument type. Expected CategoryDto or string.");
             }
+
+            var existingCategory = await _categoryRepository.GetCategoryByNameAsync(categoryName);
+            if (existingCategory != null)
+            {
+                _logger.Log($"Category '{categoryName}' already exists.", "CategoryService.AddCategoryAsync()", LogTypes.Warning);
+                return null!;
+            }
+
+            var addedCategory = await _categoryRepository.AddCategoryAsync(new CategoryEntity { Name = categoryName });
+            return CategoryDtoFactory.Create(addedCategory);
         }
         catch (Exception ex)
         {
@@ -53,6 +63,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
             return null!;
         }
     }
+
 
 
     public async Task<CategoryDto> UpdateCategoryAsync(CategoryDto categoryDto)
@@ -63,6 +74,13 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
             if (categoryToUpdate == null)
             {
                 _logger.Log($"Category with ID {categoryDto.CategoryID} not found.", "CategoryService.UpdateCategoryAsync()", LogTypes.Warning);
+                return null!;
+            }
+
+            var existingCategory = await _categoryRepository.GetCategoryByNameAsync(categoryDto.Name);
+            if (existingCategory != null && existingCategory.CategoryID != categoryToUpdate.CategoryID)
+            {
+                _logger.Log($"Category '{categoryDto.Name}' already exists.", "CategoryService.UpdateCategoryAsync()", LogTypes.Warning);
                 return null!;
             }
 
@@ -77,6 +95,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
         }
     }
 
+
     public async Task<bool> RemoveCategoryAsync(int categoryId)
     {
         try
@@ -88,6 +107,11 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger log
             _logger.Log(ex.ToString(), "CategoryService.RemoveCategoryAsync()", LogTypes.Error);
             return false;
         }
+    }
+    public async Task<CategoryDto> GetCategoryByNameAsync(string categoryName)
+    {
+        var categoryEntity = await _categoryRepository.GetCategoryByNameAsync(categoryName);
+        return categoryEntity != null ? CategoryDtoFactory.Create(categoryEntity) : null!;
     }
 }
 

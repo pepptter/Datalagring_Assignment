@@ -30,4 +30,11 @@ public interface ICategoryService
     /// <param name="categoryId">The ID of the category to be removed.</param>
     /// <returns>True if the category was successfully removed, otherwise false.</returns>
     Task<bool> RemoveCategoryAsync(int categoryId);
+
+    /// <summary>
+    /// Retrieves a category by its name asynchronously.
+    /// </summary>
+    /// <param name="categoryName">The name of the category to retrieve.</param>
+    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation. The task result contains the category DTO if found; otherwise, it returns null.</returns>
+    Task<CategoryDto> GetCategoryByNameAsync(string categoryName);
 }

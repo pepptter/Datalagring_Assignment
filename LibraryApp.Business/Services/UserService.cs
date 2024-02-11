@@ -25,8 +25,9 @@ public class UserService(IUserRepository userRepository, ILogger logger, IBorrow
             if (existingUser != null)
             {
                 _logger.Log($"User with email '{userData.Email}' already exists.", "UserService.RegisterUserAsync()", LogTypes.Info);
-                return null!;
+                return null!; 
             }
+
             var userEntity = UserDtoFactory.Create(userData);
             var addedUser = await _userRepository.AddUserAsync(userEntity);
             return UserDtoFactory.Create(addedUser);
